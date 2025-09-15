@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: tg-mini-shop-server
+    env: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/products
+    envVars:
+      - key: NODE_VERSION
+        value: 20
