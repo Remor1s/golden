@@ -1,11 +1,15 @@
 import React from 'react'
 
 export default function ProductCard({ product, onAdd }) {
-  const { title, price, oldPrice, badges, volume, brand, country } = product
+  const { title, price, oldPrice, badges, volume, brand, country, image } = product
   return (
     <div className="card">
       <div className="media">
-        <div className="placeholder">4:5</div>
+        {image ? (
+          <img src={encodeURI(`${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`)} alt={title} className="media-img" loading="lazy" />
+        ) : (
+          <div className="placeholder">4:5</div>
+        )}
         {badges?.map(b => <span key={b} className="badge">{b}</span>)}
       </div>
       <div className="info">
