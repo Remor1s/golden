@@ -11,3 +11,16 @@ server/data.sqlite
 server/products.json
 .DS_Store
 Thumbs.db
+
+node_modules/
+**/node_modules/**
+client/dist/
+**/.vite/
+.env
+**/.env
+npm-debug.log*
+yarn-*.log*
+server/data.sqlite
+server/products.json
+.DS_Store
+Thumbs.db
