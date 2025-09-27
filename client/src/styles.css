@@ -1,3 +1,7 @@
+html {
+  overscroll-behavior-y: contain;
+}
+
 :root { --bg:#fff; --text:#111; --muted:#666; --accent:#e5ff00; --border:#eee; }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
