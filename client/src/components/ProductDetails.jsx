@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { createPortal } from 'react-dom'
 
 function getSpecsFor(product) {
   const category = product.category || ''
@@ -62,9 +63,9 @@ export default function ProductDetails({ product, onClose, onAdd }) {
   const specs = useMemo(() => getSpecsFor(product), [product])
   const imageUrl = product.image ? encodeURI(`${import.meta.env.BASE_URL}${product.image.replace(/^\//, '')}`) : ''
 
-  return (
-    <div className="filter-overlay" role="dialog" aria-modal="true" onPointerDown={(e) => { e.stopPropagation(); onClose(); }}>
-      <div className="filter-popover" onPointerDown={e => e.stopPropagation()}>
+  const node = (
+    <div className="filter-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+      <div className="filter-popover" onClick={e => e.stopPropagation()}>
         <div style={{ display:'grid', gridTemplateColumns:'84px 1fr', gap:12, alignItems:'center', marginBottom:6 }}>
           <div style={{ width:84, height:84, borderRadius:10, overflow:'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
             {imageUrl ? <img src={imageUrl} alt={product.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
@@ -96,4 +97,6 @@ export default function ProductDetails({ product, onClose, onAdd }) {
       </div>
     </div>
   )
+
+  return createPortal(node, document.body)
 }
