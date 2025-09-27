@@ -23,14 +23,14 @@ export default function App() {
     try {
       const w = window
       if (w?.Telegram?.WebApp) {
-        w.Telegram.WebApp.ready()
-        if (typeof w.Telegram.WebApp.expand === 'function') {
-          w.Telegram.WebApp.expand()
-        }
+        const tg = w.Telegram.WebApp
+        tg.ready()
+        if (typeof tg.expand === 'function') tg.expand()
+        // Белый фон за страницей WebApp (виден при «протяжке»)
+        if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#ffffff')
+        if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#ffffff')
         // Блокируем закрытие свайпом вниз (как в SheBanShe)
-        if (typeof w.Telegram.WebApp.disableVerticalSwipes === 'function') {
-          w.Telegram.WebApp.disableVerticalSwipes()
-        }
+        if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes()
       }
     } catch {}
     Promise.all([getProducts(), getCart()])
