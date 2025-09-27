@@ -63,11 +63,10 @@ export default function ProductDetails({ product, onClose, onAdd }) {
   const imageUrl = product.image ? encodeURI(`${import.meta.env.BASE_URL}${product.image.replace(/^\//, '')}`) : ''
 
   return (
-    <div className="confirm-overlay" role="dialog" aria-modal="true" onClick={onClose}>
-      <div className="confirm-sheet" onClick={e => e.stopPropagation()}>
-        <div className="confirm-grabber" />
-        <div style={{ display:'grid', gridTemplateColumns:'100px 1fr', gap:12, alignItems:'center', marginBottom:10 }}>
-          <div style={{ width:100, height:100, borderRadius:10, overflow:'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
+    <div className="filter-overlay" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="filter-popover" onClick={e => e.stopPropagation()}>
+        <div style={{ display:'grid', gridTemplateColumns:'84px 1fr', gap:12, alignItems:'center', marginBottom:6 }}>
+          <div style={{ width:84, height:84, borderRadius:10, overflow:'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
             {imageUrl ? <img src={imageUrl} alt={product.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
           </div>
           <div>
@@ -79,7 +78,7 @@ export default function ProductDetails({ product, onClose, onAdd }) {
           </div>
         </div>
 
-        <div style={{ fontWeight:700, marginBottom:6 }}>Подробные характеристики</div>
+        <div style={{ fontWeight:700, marginTop:6, marginBottom:6 }}>Подробные характеристики</div>
         <div className="specs">
           {specs.map(row => (
             <div key={row.label} className="spec-row">
@@ -90,7 +89,7 @@ export default function ProductDetails({ product, onClose, onAdd }) {
           ))}
         </div>
 
-        <div className="confirm-actions" style={{ marginTop:16 }}>
+        <div className="confirm-actions" style={{ marginTop:10 }}>
           <button className="link" onClick={onClose}>Закрыть</button>
           <button className="primary" onClick={onAdd}>В корзину</button>
         </div>
