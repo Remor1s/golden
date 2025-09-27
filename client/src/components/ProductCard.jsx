@@ -1,14 +1,26 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import ProductDetails from './ProductDetails.jsx'
 
 export default function ProductCard({ product, onAdd }) {
   const { title, price, oldPrice, badges, volume, brand, country, image } = product
   const [open, setOpen] = useState(false)
+  const lastCloseAtRef = useRef(0)
 
   const imgUrl = image ? encodeURI(`${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`) : ''
 
+  const handleCardClick = () => {
+    // Prevent immediate reopen right after closing overlay (click-through)
+    if (Date.now() - lastCloseAtRef.current < 200) return
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    lastCloseAtRef.current = Date.now()
+    setOpen(false)
+  }
+
   return (
-    <div className="card" onClick={() => setOpen(true)} style={{ cursor:'pointer' }}>
+    <div className="card" onClick={handleCardClick} style={{ cursor:'pointer' }}>
       <div className="media">
         {imgUrl ? (
           <img src={imgUrl} alt={title} className="media-img" loading="lazy" />
@@ -30,8 +42,8 @@ export default function ProductCard({ product, onAdd }) {
       {open && (
         <ProductDetails
           product={product}
-          onClose={() => setOpen(false)}
-          onAdd={() => { onAdd(); setOpen(false) }}
+          onClose={handleClose}
+          onAdd={() => { onAdd(); handleClose() }}
         />
       )}
     </div>
