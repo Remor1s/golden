@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
+import ProductDetails from './ProductDetails.jsx'
 
 export default function ProductCard({ product, onAdd }) {
   const { title, price, oldPrice, badges, volume, brand, country, image } = product
+  const [open, setOpen] = useState(false)
+
+  const imgUrl = image ? encodeURI(`${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`) : ''
+
   return (
-    <div className="card">
+    <div className="card" onClick={() => setOpen(true)} style={{ cursor:'pointer' }}>
       <div className="media">
-        {image ? (
-          <img src={encodeURI(`${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`)} alt={title} className="media-img" loading="lazy" />
+        {imgUrl ? (
+          <img src={imgUrl} alt={title} className="media-img" loading="lazy" />
         ) : (
           <div className="placeholder">4:5</div>
         )}
@@ -19,8 +24,16 @@ export default function ProductCard({ product, onAdd }) {
           <div className="price">{price} ₽</div>
           {oldPrice > 0 && <div className="old">{oldPrice} ₽</div>}
         </div>
-        <button className="primary w-100" onClick={onAdd}>В корзину</button>
+        <button className="primary w-100" onClick={(e) => { e.stopPropagation(); onAdd(); }}>В корзину</button>
       </div>
+
+      {open && (
+        <ProductDetails
+          product={product}
+          onClose={() => setOpen(false)}
+          onAdd={() => { onAdd(); setOpen(false) }}
+        />
+      )}
     </div>
   )
 }
