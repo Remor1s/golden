@@ -59,14 +59,14 @@ function getSpecsFor(product) {
   ]
 }
 
-export default function ProductDetails({ product, onClose, onAdd }) {
+export default function ProductDetails({ product, onClose, onAdd, isFavorite = false, onToggleFavorite }) {
   const specs = useMemo(() => getSpecsFor(product), [product])
   const imageUrl = product.image ? encodeURI(`${import.meta.env.BASE_URL}${product.image.replace(/^\//, '')}`) : ''
 
   const node = (
     <div className="filter-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); onClose(); }}>
       <div className="filter-popover" onClick={e => e.stopPropagation()}>
-        <div style={{ display:'grid', gridTemplateColumns:'84px 1fr', gap:12, alignItems:'center', marginBottom:6 }}>
+        <div style={{ display:'grid', gridTemplateColumns:'84px 1fr auto', gap:12, alignItems:'center', marginBottom:6 }}>
           <div style={{ width:84, height:84, borderRadius:10, overflow:'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
             {imageUrl ? <img src={imageUrl} alt={product.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
           </div>
@@ -77,6 +77,18 @@ export default function ProductDetails({ product, onClose, onAdd }) {
               {product.oldPrice > 0 && <div className="old">{product.oldPrice} ₽</div>}
             </div>
           </div>
+          {onToggleFavorite && (
+            <button
+              className={"icon-like" + (isFavorite ? ' liked' : '')}
+              aria-label={isFavorite ? 'Убрать из избранного' : 'В избранное'}
+              title={isFavorite ? 'Убрать из избранного' : 'В избранное'}
+              onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21s-6.716-4.35-9.192-8.1C1.08 10.18 2.2 7 5.4 6.2c1.8-.46 3.6.3 4.6 1.8 1-1.5 2.8-2.26 4.6-1.8 3.2.8 4.32 3.98 2.592 6.7C18.716 16.65 12 21 12 21z"/>
+              </svg>
+            </button>
+          )}
         </div>
 
         <div style={{ fontWeight:700, marginTop:6, marginBottom:6 }}>Подробные характеристики</div>

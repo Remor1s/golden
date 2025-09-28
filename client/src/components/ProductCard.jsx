@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import ProductDetails from './ProductDetails.jsx'
 
-export default function ProductCard({ product, onAdd }) {
+export default function ProductCard({ product, onAdd, isFavorite = false, onToggleFavorite }) {
   const { title, price, oldPrice, badges, volume, brand, country, image } = product
   const [open, setOpen] = useState(false)
   const lastCloseAtRef = useRef(0)
@@ -28,6 +28,18 @@ export default function ProductCard({ product, onAdd }) {
           <div className="placeholder">4:5</div>
         )}
         {badges?.map(b => <span key={b} className="badge">{b}</span>)}
+        {onToggleFavorite && (
+          <button
+            className={"icon-like" + (isFavorite ? ' liked' : '')}
+            aria-label={isFavorite ? 'Убрать из избранного' : 'В избранное'}
+            title={isFavorite ? 'Убрать из избранного' : 'В избранное'}
+            onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21s-6.716-4.35-9.192-8.1C1.08 10.18 2.2 7 5.4 6.2c1.8-.46 3.6.3 4.6 1.8 1-1.5 2.8-2.26 4.6-1.8 3.2.8 4.32 3.98 2.592 6.7C18.716 16.65 12 21 12 21z"/>
+            </svg>
+          </button>
+        )}
       </div>
       <div className="info">
         <div className="title" title={title}>{title}</div>
@@ -44,6 +56,8 @@ export default function ProductCard({ product, onAdd }) {
           product={product}
           onClose={handleClose}
           onAdd={() => { onAdd(); handleClose() }}
+          onToggleFavorite={onToggleFavorite}
+          isFavorite={isFavorite}
         />
       )}
     </div>

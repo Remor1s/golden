@@ -17,9 +17,13 @@ export default function App() {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmPromoInput, setConfirmPromoInput] = useState('')
   const [confirmError, setConfirmError] = useState('')
+  const [activeTab, setActiveTab] = useState('catalog') // catalog | favorites | search
+  const [searchQuery, setSearchQuery] = useState('')
+  const [favorites, setFavorites] = useState([])
 
   useEffect(() => {
     // Инициализация Telegram WebApp (если открыто внутри Telegram)
+    let cleanup = () => {}
     try {
       const w = window
       if (w?.Telegram?.WebApp) {
@@ -31,12 +35,39 @@ export default function App() {
         if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#ffffff')
         // Блокируем закрытие свайпом вниз (как в SheBanShe)
         if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes()
+
+        // Показ зелёной кнопки «Каталог» как в Telegram (MainButton)
+        const onMainButtonClick = () => {
+          // Скролл к началу каталога (или к корзине, если нужно)
+          if (drawerRef.current) {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }
+        }
+        tg.MainButton?.setParams?.({ text: 'Каталог', color: '#30d158', text_color: '#ffffff' })
+        tg.MainButton?.onClick?.(onMainButtonClick)
+        tg.MainButton?.show?.()
+        cleanup = () => {
+          tg.MainButton?.offClick?.(onMainButtonClick)
+          tg.MainButton?.hide?.()
+        }
       }
     } catch {}
     Promise.all([getProducts(), getCart()])
       .then(([p, c]) => { setProducts(p.items || []); setCart(c.items || []) })
       .finally(() => setLoading(false))
+    return cleanup
   }, [])
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('mini_favorites_v1')
+      if (raw) setFavorites(JSON.parse(raw))
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    try { localStorage.setItem('mini_favorites_v1', JSON.stringify(favorites)) } catch {}
+  }, [favorites])
 
   const categories = useMemo(() => {
     const available = Array.from(new Set(products.map(p => p.category))).filter(Boolean)
@@ -62,6 +93,26 @@ export default function App() {
     return products.filter(p => set.has(p.category))
   }, [products, selectedCategories])
 
+  const searchFilteredProducts = useMemo(() => {
+    const q = (searchQuery || '').trim().toLowerCase()
+    const base = selectedCategories.length ? filteredProducts : products
+    if (!q) return base
+    return base.filter(p => (p.title || '').toLowerCase().includes(q))
+  }, [products, filteredProducts, selectedCategories, searchQuery])
+
+  const favoriteProducts = useMemo(() => {
+    if (!favorites.length) return []
+    const set = new Set(favorites)
+    const base = selectedCategories.length ? filteredProducts : products
+    return base.filter(p => set.has(p.id))
+  }, [products, filteredProducts, selectedCategories, favorites])
+
+  const displayedProducts = useMemo(() => {
+    if (activeTab === 'favorites') return favoriteProducts
+    if (activeTab === 'search') return searchFilteredProducts
+    return filteredProducts
+  }, [activeTab, filteredProducts, searchFilteredProducts, favoriteProducts])
+
   const toggleCategory = (value) => {
     setSelectedCategories(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value])
   }
@@ -74,6 +125,15 @@ export default function App() {
   const handleRemove = async (productId) => {
     const res = await removeFromCart(productId)
     setCart(res.items)
+  }
+
+  const toggleFavorite = (productId) => {
+    setFavorites(prev => prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId])
+  }
+
+  const clearFavorites = () => {
+    setFavorites([])
+    try { localStorage.removeItem('mini_favorites_v1') } catch {}
   }
 
   const handleCheckout = async () => {
@@ -120,8 +180,23 @@ export default function App() {
       <PromoCategories />
       
       <div className="toolbar">
-        <h1>Новинки</h1>
+        <h1>Каталог</h1>
         <div className="tabs" style={{ display: 'flex', gap: 8, alignItems: 'center', position: 'relative' }}>
+          <button className={"tab" + (activeTab === 'catalog' ? ' active' : '')} onClick={() => setActiveTab('catalog')}>Все</button>
+          <button className={"tab" + (activeTab === 'favorites' ? ' active' : '')} onClick={() => setActiveTab('favorites')}>Избранное</button>
+          <button className={"tab" + (activeTab === 'search' ? ' active' : '')} onClick={() => setActiveTab('search')}>Поиск</button>
+          {activeTab === 'search' && (
+            <input
+              className="search-input"
+              type="search"
+              placeholder="Искать по названию"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+          )}
+          {activeTab === 'favorites' && favorites.length > 0 && (
+            <button className="secondary" onClick={clearFavorites} title="Очистить избранное">Очистить</button>
+          )}
           <button className="icon-btn" aria-label="Фильтры" title="Фильтры" onClick={() => setFilterOpen(v => !v)}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -150,8 +225,14 @@ export default function App() {
         
       </div>
       <div className="grid">
-        {filteredProducts.map(p => (
-          <ProductCard key={p.id} product={p} onAdd={() => handleAdd(p.id)} />
+        {displayedProducts.map(p => (
+          <ProductCard
+            key={p.id}
+            product={p}
+            onAdd={() => handleAdd(p.id)}
+            isFavorite={favorites.includes(p.id)}
+            onToggleFavorite={() => toggleFavorite(p.id)}
+          />
         ))}
       </div>
 
