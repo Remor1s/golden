@@ -285,17 +285,33 @@ export default function App() {
       <div className="drawer" ref={drawerRef}>
         <div className="drawer-title">Корзина</div>
         {cart.length === 0 && <div className="muted">Пока пусто</div>}
-        {cart.map(i => {
-          const p = products.find(p => p.id === i.productId)
-          return (
-            <div key={i.productId} className="row">
-              <div className="row-title">{p?.title || i.productId}</div>
-              <div className="row-qty">×{i.qty}</div>
-              <div className="row-price">{i.price * i.qty} ₽</div>
-              <button className="link" onClick={() => handleRemove(i.productId)}>убрать</button>
-            </div>
-          )
-        })}
+        <div className="cart-cards">
+          {cart.map(i => {
+            const p = products.find(p => p.id === i.productId)
+            const img = p?.image ? encodeURI(`${import.meta.env.BASE_URL}${p.image.replace(/^\//,'')}`) : ''
+            return (
+              <div key={i.productId} className="cart-card">
+                <div className="cart-card-media">
+                  {img ? (
+                    <img src={img} alt={p?.title || i.productId} />
+                  ) : (
+                    <div className="placeholder">4:5</div>
+                  )}
+                </div>
+                <div className="cart-card-info">
+                  <div className="cart-card-title" title={p?.title || i.productId}>{p?.title || i.productId}</div>
+                  <div className="cart-card-meta">
+                    <span className="cart-card-qty">×{i.qty}</span>
+                    <span className="price">{i.price * i.qty} ₽</span>
+                  </div>
+                  <div className="cart-card-actions">
+                    <button className="link" onClick={() => handleRemove(i.productId)}>убрать</button>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
         <div className="promo-row">
           <input
             className="promo-input"
@@ -337,17 +353,33 @@ export default function App() {
           <div className="fullscreen-sheet" onClick={e => e.stopPropagation()}>
             <div className="sheet-title">Корзина</div>
             {cart.length === 0 && <div className="muted" style={{ marginBottom: 10 }}>Пока пусто</div>}
-            {cart.map(i => {
-              const p = products.find(p => p.id === i.productId)
-              return (
-                <div key={i.productId} className="row">
-                  <div className="row-title">{p?.title || i.productId}</div>
-                  <div className="row-qty">×{i.qty}</div>
-                  <div className="row-price">{i.price * i.qty} ₽</div>
-                  <button className="link" onClick={() => handleRemove(i.productId)}>убрать</button>
-                </div>
-              )
-            })}
+            <div className="cart-cards">
+              {cart.map(i => {
+                const p = products.find(p => p.id === i.productId)
+                const img = p?.image ? encodeURI(`${import.meta.env.BASE_URL}${p.image.replace(/^\//,'')}`) : ''
+                return (
+                  <div key={i.productId} className="cart-card">
+                    <div className="cart-card-media">
+                      {img ? (
+                        <img src={img} alt={p?.title || i.productId} />
+                      ) : (
+                        <div className="placeholder">4:5</div>
+                      )}
+                    </div>
+                    <div className="cart-card-info">
+                      <div className="cart-card-title" title={p?.title || i.productId}>{p?.title || i.productId}</div>
+                      <div className="cart-card-meta">
+                        <span className="cart-card-qty">×{i.qty}</span>
+                        <span className="price">{i.price * i.qty} ₽</span>
+                      </div>
+                      <div className="cart-card-actions">
+                        <button className="link" onClick={() => handleRemove(i.productId)}>убрать</button>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
             <div className="promo-row">
               <input
                 className="promo-input"
