@@ -8,6 +8,7 @@ export default function AdminPanel() {
   const [cat, setCat] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [promoPercent, setPromoPercent] = useState(0)
+  const [focusId, setFocusId] = useState(null)
 
   useEffect(() => {
     getProducts().then(r => setItems(r.items || [])).finally(() => setLoading(false))
@@ -96,7 +97,7 @@ export default function AdminPanel() {
 
       <div className="admin-grid">
         {view.map(p => (
-          <div className="admin-card" key={p.id}>
+          <div className="admin-card" key={p.id} id={`adm-item-${p.id}`} style={{ outline: focusId===p.id?'2px solid #111':'none' }}>
             <div className="admin-row">
               <div className="admin-col">
                 <label>ID</label>
@@ -179,7 +180,7 @@ export default function AdminPanel() {
           {items.map(p => {
             const img = p.image ? encodeURI(`${import.meta.env.BASE_URL}${p.image.replace(/^\//,'')}`) : ''
             return (
-              <div key={`preview-${p.id}`} className="card">
+              <div key={`preview-${p.id}`} className="card" style={{ position:'relative' }}>
                 <div className="media">
                   {img ? <img className="media-img" src={img} alt={p.title} /> : <div className="placeholder">4:5</div>}
                   {!!(p.badges && p.badges.length) && <span className="badge">{p.badges[0]}</span>}
@@ -192,6 +193,13 @@ export default function AdminPanel() {
                     {p.oldPrice > 0 && <div className="old">{p.oldPrice} ₽</div>}
                   </div>
                 </div>
+                <button
+                  className="icon-btn"
+                  title="Редактировать"
+                  aria-label="Редактировать"
+                  onClick={() => { setFocusId(p.id); setTimeout(()=>{ try{ document.getElementById(`adm-item-${p.id}`)?.scrollIntoView({ behavior:'smooth', block:'start' }) } catch{} }, 0) }}
+                  style={{ position:'absolute', right:8, top:8 }}
+                >✎</button>
               </div>
             )
           })}
