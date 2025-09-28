@@ -365,11 +365,6 @@ export default function App() {
             <div />
           </div>
         )}
-        <div className="drawer-footer">
-          <div className="total">Итого: {discount > 0 ? (<><span className="old-inline">{total} ₽</span> <span>{payable} ₽</span></>) : (<span>{payable} ₽</span>)}</div>
-          <button className="secondary" disabled={!payable || placing} onClick={goToCart}>КОРЗИНА</button>
-          <button className="primary" disabled={!payable || placing} onClick={openConfirm}>Оформить</button>
-        </div>
       </div>
       {cartOpen && (
         <div className="fullscreen-overlay" role="dialog" aria-modal="true" onClick={() => setCartOpen(false)}>
