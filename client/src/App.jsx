@@ -212,6 +212,7 @@ export default function App() {
             onAddProduct={(id) => handleAdd(id)}
             isFavorite={favorites.includes(p.id)}
             onToggleFavoriteProduct={(id) => toggleFavorite(id)}
+            isFavoriteId={(id) => favorites.includes(id)}
           />
         ))}
       </div>

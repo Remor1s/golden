@@ -59,7 +59,7 @@ function getSpecsFor(product) {
   ]
 }
 
-export default function ProductDetails({ product, onClose, onAdd, isFavorite = false, onToggleFavorite, allProducts = [], onAddProduct, onToggleFavoriteProduct }) {
+export default function ProductDetails({ product, onClose, onAdd, isFavorite = false, onToggleFavorite, allProducts = [], onAddProduct, onToggleFavoriteProduct, isFavoriteId }) {
   const specs = useMemo(() => getSpecsFor(product), [product])
   const imageUrl = product.image ? encodeURI(`${import.meta.env.BASE_URL}${product.image.replace(/^\//, '')}`) : ''
   const [descOpen, setDescOpen] = useState(false)
@@ -138,12 +138,29 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
               {similar.map(sp => {
                 const simImg = sp.image ? encodeURI(`${import.meta.env.BASE_URL}${sp.image.replace(/^\//, '')}`) : ''
                 return (
-                  <div key={sp.id} style={{ minWidth: 140, border:'1px solid var(--border)', borderRadius: 12, overflow:'hidden', background:'#fff' }}>
-                    <div style={{ width:140, height:120, background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                      {simImg ? <img src={simImg} alt={sp.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
+                  <div key={sp.id} style={{ minWidth: 160, border:'1px solid var(--border)', borderRadius: 12, overflow:'hidden', background:'#fff' }}>
+                    <div style={{ position:'relative' }}>
+                      <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); /* открыть детально этот товар */ window.scrollTo(0,0); }} style={{ textDecoration:'none', color:'inherit', display:'block' }}>
+                        <div style={{ width:160, height:130, background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                          {simImg ? <img src={simImg} alt={sp.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
+                        </div>
+                      </a>
+                      {onToggleFavoriteProduct && (
+                        <button
+                          className={"icon-like" + (isFavoriteId && isFavoriteId(sp.id) ? ' liked' : '')}
+                          aria-label={(isFavoriteId && isFavoriteId(sp.id)) ? 'Убрать из избранного' : 'В избранное'}
+                          title={(isFavoriteId && isFavoriteId(sp.id)) ? 'Убрать из избранного' : 'В избранное'}
+                          onClick={(e) => { e.stopPropagation(); onToggleFavoriteProduct(sp.id) }}
+                          style={{ right: 8, top: 8 }}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                          </svg>
+                        </button>
+                      )}
                     </div>
                     <div style={{ padding:8 }}>
-                      <div style={{ fontSize:12, lineHeight:1.3, height:32, overflow:'hidden' }} title={sp.title}>{sp.title}</div>
+                      <div style={{ fontSize:12, lineHeight:1.3, height:34, overflow:'hidden' }} title={sp.title}>{sp.title}</div>
                       <div style={{ display:'flex', gap:6, alignItems:'baseline', margin:'6px 0' }}>
                         <div className="price" style={{ fontSize:13 }}>{sp.price} ₽</div>
                         {sp.oldPrice > 0 && <div className="old" style={{ fontSize:12 }}>{sp.oldPrice} ₽</div>}

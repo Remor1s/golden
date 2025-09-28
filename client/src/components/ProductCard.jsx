@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import ProductDetails from './ProductDetails.jsx'
 
-export default function ProductCard({ product, onAdd, isFavorite = false, onToggleFavorite, allProducts, onAddProduct, onToggleFavoriteProduct }) {
+export default function ProductCard({ product, onAdd, isFavorite = false, onToggleFavorite, allProducts, onAddProduct, onToggleFavoriteProduct, isFavoriteId }) {
   const { title, price, oldPrice, badges, volume, brand, country, image } = product
   const [open, setOpen] = useState(false)
   const lastCloseAtRef = useRef(0)
