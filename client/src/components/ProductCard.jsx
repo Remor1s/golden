@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import ProductDetails from './ProductDetails.jsx'
 
-export default function ProductCard({ product, onAdd, isFavorite = false, onToggleFavorite }) {
+export default function ProductCard({ product, onAdd, isFavorite = false, onToggleFavorite, allProducts, onAddProduct, onToggleFavoriteProduct }) {
   const { title, price, oldPrice, badges, volume, brand, country, image } = product
   const [open, setOpen] = useState(false)
   const lastCloseAtRef = useRef(0)
@@ -48,16 +48,19 @@ export default function ProductCard({ product, onAdd, isFavorite = false, onTogg
           <div className="price">{price} ₽</div>
           {oldPrice > 0 && <div className="old">{oldPrice} ₽</div>}
         </div>
-        <button className="primary w-100" onClick={(e) => { e.stopPropagation(); onAdd(); }}>В корзину</button>
+        <button className="primary w-100" onClick={(e) => { e.stopPropagation(); (onAddProduct ? onAddProduct(product.id) : onAdd?.()); }}>В корзину</button>
       </div>
 
       {open && (
         <ProductDetails
           product={product}
           onClose={handleClose}
-          onAdd={() => { onAdd(); handleClose() }}
-          onToggleFavorite={onToggleFavorite}
+          onAdd={() => { (onAddProduct ? onAddProduct(product.id) : onAdd?.()); handleClose() }}
+          onToggleFavorite={onToggleFavorite || (onToggleFavoriteProduct ? () => onToggleFavoriteProduct(product.id) : undefined)}
           isFavorite={isFavorite}
+          allProducts={allProducts}
+          onAddProduct={onAddProduct}
+          onToggleFavoriteProduct={onToggleFavoriteProduct}
         />
       )}
     </div>

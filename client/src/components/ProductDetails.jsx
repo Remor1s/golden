@@ -59,10 +59,14 @@ function getSpecsFor(product) {
   ]
 }
 
-export default function ProductDetails({ product, onClose, onAdd, isFavorite = false, onToggleFavorite }) {
+export default function ProductDetails({ product, onClose, onAdd, isFavorite = false, onToggleFavorite, allProducts = [], onAddProduct, onToggleFavoriteProduct }) {
   const specs = useMemo(() => getSpecsFor(product), [product])
   const imageUrl = product.image ? encodeURI(`${import.meta.env.BASE_URL}${product.image.replace(/^\//, '')}`) : ''
   const [descOpen, setDescOpen] = useState(false)
+  const similar = useMemo(() => {
+    const list = Array.isArray(allProducts) ? allProducts : []
+    return list.filter(p => p.category === product.category && p.id !== product.id).slice(0, 12)
+  }, [allProducts, product])
 
   const node = (
     <div className="fullscreen-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); onClose(); }}>
@@ -119,6 +123,32 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
           <button className="link" onClick={onClose}>Закрыть</button>
           <button className="primary" onClick={onAdd}>В корзину</button>
         </div>
+
+        {similar.length > 0 && (
+          <div style={{ marginTop: 14 }}>
+            <div className="sheet-title" style={{ marginBottom: 8 }}>Похожие товары</div>
+            <div style={{ display:'flex', gap: 10, overflowX:'auto', paddingBottom: 6 }}>
+              {similar.map(sp => {
+                const simImg = sp.image ? encodeURI(`${import.meta.env.BASE_URL}${sp.image.replace(/^\//, '')}`) : ''
+                return (
+                  <div key={sp.id} style={{ minWidth: 140, border:'1px solid var(--border)', borderRadius: 12, overflow:'hidden', background:'#fff' }}>
+                    <div style={{ width:140, height:120, background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                      {simImg ? <img src={simImg} alt={sp.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
+                    </div>
+                    <div style={{ padding:8 }}>
+                      <div style={{ fontSize:12, lineHeight:1.3, height:32, overflow:'hidden' }} title={sp.title}>{sp.title}</div>
+                      <div style={{ display:'flex', gap:6, alignItems:'baseline', margin:'6px 0' }}>
+                        <div className="price" style={{ fontSize:13 }}>{sp.price} ₽</div>
+                        {sp.oldPrice > 0 && <div className="old" style={{ fontSize:12 }}>{sp.oldPrice} ₽</div>}
+                      </div>
+                      <button className="secondary" style={{ width:'100%' }} onClick={() => onAddProduct && onAddProduct(sp.id)}>В корзину</button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

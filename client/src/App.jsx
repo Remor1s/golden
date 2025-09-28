@@ -208,9 +208,10 @@ export default function App() {
           <ProductCard
             key={p.id}
             product={p}
-            onAdd={() => handleAdd(p.id)}
+            allProducts={products}
+            onAddProduct={(id) => handleAdd(id)}
             isFavorite={favorites.includes(p.id)}
-            onToggleFavorite={() => toggleFavorite(p.id)}
+            onToggleFavoriteProduct={(id) => toggleFavorite(id)}
           />
         ))}
       </div>
