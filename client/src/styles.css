@@ -146,18 +146,14 @@ html, body, #root { height: 100%; margin: 0; background: var(--bg); color: var(-
   /* Укрупнение и стилизация нижней панели оформления */
   .row { padding: 10px 0; }
   .drawer { position: static; padding-bottom: 0; }
-  .drawer::after { content: ""; display: block; height: calc(84px + env(safe-area-inset-bottom)); }
+  .drawer::after { content: none; }
   .drawer-footer {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-    background: rgba(255,255,255,.92);
-    -webkit-backdrop-filter: saturate(180%) blur(14px);
-    backdrop-filter: saturate(180%) blur(14px);
+    position: static; /* не перекрывает нижнюю навигацию */
+    padding: 10px 12px;
+    background: #fff;
     border-top: 1px solid var(--border);
-    box-shadow: 0 -10px 30px rgba(0,0,0,.15);
+    box-shadow: none;
     display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px;
-    z-index: 950; /* выше нижней панели навигации */
   }
   .drawer-footer .primary { padding: 14px 18px; font-size: 17px; border-radius: 14px; }
   .drawer-footer .secondary { padding: 14px 18px; font-size: 17px; border-radius: 14px; background: #fff; color:#111; border:1px solid var(--border); }
