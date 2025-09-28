@@ -168,15 +168,6 @@ export default function App() {
       <div className="toolbar">
         <h1>Каталог</h1>
         <div className="tabs" style={{ display: 'flex', gap: 8, alignItems: 'center', position: 'relative' }}>
-          <button className={"tab" + (activeTab === 'catalog' ? ' active' : '')} onClick={() => setActiveTab('catalog')}>Все</button>
-          <button className={"tab" + (activeTab === 'favorites' ? ' active' : '')} onClick={() => setActiveTab('favorites')}>Избранное</button>
-          <button
-            className={"tab" + (activeTab === 'search' ? ' active' : '')}
-            onClick={() => { setActiveTab('search'); setSearchOpen(true) }}
-          >Поиск</button>
-          {activeTab === 'favorites' && favorites.length > 0 && (
-            <button className="secondary" onClick={clearFavorites} title="Очистить избранное">Очистить</button>
-          )}
           <button className="icon-btn" aria-label="Фильтры" title="Фильтры" onClick={() => setFilterOpen(v => !v)}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -224,9 +215,9 @@ export default function App() {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2v-9z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
           <span className="label">Главная</span>
         </button>
-        <button className={"nav-btn" + (activeNav==='catalog'?' active':'')} onClick={() => { setActiveNav('catalog'); setActiveTab('catalog'); }}>
+        <button className={"nav-btn" + (activeNav==='search'?' active':'')} onClick={() => { setActiveNav('search'); setActiveTab('search'); setSearchOpen(true); }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2"/><path d="M21 21l-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-          <span className="label">Каталог</span>
+          <span className="label">Поиск</span>
         </button>
         <button className={"nav-btn" + (activeNav==='cart'?' active':'')} onClick={() => { setActiveNav('cart'); setCartOpen(true); }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h15l-1.5 9h-12z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="9" cy="20" r="1.6" fill="currentColor"/><circle cx="18" cy="20" r="1.6" fill="currentColor"/></svg>
@@ -235,10 +226,6 @@ export default function App() {
         <button className={"nav-btn" + (activeNav==='fav'?' active':'')} onClick={() => { setActiveNav('fav'); setActiveTab('favorites'); }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" strokeWidth="2" fill="none"/></svg>
           <span className="label">Избранное</span>
-        </button>
-        <button className={"nav-btn" + (activeNav==='profile'?' active':'')} onClick={() => setActiveNav('profile')}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="3.2" stroke="currentColor" strokeWidth="2"/><path d="M4 20c1.6-3.6 5-6 8-6s6.4 2.4 8 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-          <span className="label">Профиль</span>
         </button>
       </div>
 
