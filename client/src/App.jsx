@@ -36,8 +36,7 @@ export default function App() {
         // Блокируем закрытие свайпом вниз (как в SheBanShe)
         if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes()
 
-        // Скрываем системную MainButton в Telegram
-        tg.MainButton?.hide?.()
+        // Telegram WebApp инициализация без MainButton
       }
     } catch {}
     Promise.all([getProducts(), getCart()])
