@@ -114,6 +114,31 @@ const stylingImages = [
   'd0136abd30db815e63e973b4f4f96f9010c3e73e_2000x-3.webp'
 ]
 
+function buildDescriptionFromName(fileName) {
+  const name = fileName.toLowerCase()
+  const parts = []
+  if (/oi\b/.test(name)) parts.push('Аромат: тёплый, обволакивающий. Эффект: блеск и шелковистость, антифриз-эффект.')
+  if (/momo\b/.test(name)) parts.push('Аромат: свежий, акватический. Эффект: глубокое увлажнение для сухих волос.')
+  if (/minu\b/.test(name)) parts.push('Аромат: цитрусовый. Эффект: защита и сияние окрашенных волос.')
+  if (/nounou\b/.test(name)) parts.push('Аромат: кремовый. Эффект: питание и восстановление повреждённых волос.')
+  if (/melu\b/.test(name)) parts.push('Аромат: чистый, мягкий. Эффект: укрепление и защита от ломкости для длинных волос.')
+  if (/dede\b/.test(name)) parts.push('Аромат: деликатный, свежий. Эффект: мягкое ежедневное очищение.')
+  if (/solu\b/.test(name)) parts.push('Аромат: травяной. Эффект: глубокое очищение и детокс накоплений стайлинга.')
+  if (/replumping\b/.test(name)) parts.push('Аромат: цветочный. Эффект: упругость и эластичность благодаря гиалуроновой кислоте.')
+  if (/calming\b/.test(name)) parts.push('Аромат: лёгкий. Эффект: успокоение чувствительной кожи головы.')
+  if (/su\b/.test(name)) parts.push('Аромат: солнечный, цитрусовый. Эффект: мягкое очищение после солнца.')
+  if (/love-?curl|curl\b/.test(name)) parts.push('Аромат: лёгкий. Эффект: эластичные, очерченные кудри без пушистости.')
+  if (/love-?smoothing|smoothing\b/.test(name)) parts.push('Аромат: мягкий. Эффект: сглаживание, контроль пушистости, мягкий блеск.')
+  if (/volume|volu\b/.test(name)) parts.push('Эффект: объём от корней и лёгкость для тонких волос.')
+  if (/body wash|body-wash|body_wash|body\b/.test(name)) parts.push('Для тела: деликатное очищение, ощущение свежести кожи.')
+  if (/mask|butter|pak/.test(name)) parts.push('Текстура: насыщенная. Эффект: интенсивное восстановление и питание.')
+  if (/conditioner/.test(name)) parts.push('Кондиционер: разглаживание, лёгкость расчёсывания, уменьшение пушистости.')
+  if (/shampoo|cleansing|wash|bar/.test(name)) parts.push('Шампунь: мягкая пена, бережное очищение без утяжеления.')
+  if (/milk|serum|oil|spray|fluid|mist|wax|gel|mousse|primer|textur/i.test(name)) parts.push('Стайлинг/уход: подчёркивает текстуру, защищает и придаёт форму.')
+  const text = parts.join(' ')
+  return text || 'Аромат: чистый и деликатный. Эффект: ухоженный вид и комфорт в использовании.'
+}
+
 function prettifyTitle(fileName) {
   const base = decodeURIComponent(fileName.replace(/\.[^.]+$/, ''))
   const cleaned = base
@@ -180,7 +205,7 @@ function buildDavinesProducts() {
         badges: [],
         category,
         image,
-        description: `Аромат: чистый, свежий. Текстура: комфортная, легко распределяется. Эффект: аккуратное очищение и мягкость. Подходит для ежедневного применения.`
+        description: buildDescriptionFromName(f)
       })
     }
   }
