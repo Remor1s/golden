@@ -35,8 +35,8 @@ export default function ProductCard({ product, onAdd, isFavorite = false, onTogg
             title={isFavorite ? 'Убрать из избранного' : 'В избранное'}
             onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 21s-6.716-4.35-9.192-8.1C1.08 10.18 2.2 7 5.4 6.2c1.8-.46 3.6.3 4.6 1.8 1-1.5 2.8-2.26 4.6-1.8 3.2.8 4.32 3.98 2.592 6.7C18.716 16.65 12 21 12 21z"/>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
           </button>
         )}
