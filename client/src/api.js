@@ -317,4 +317,18 @@ export const saveProducts = async (items) => {
   }
 }
 
+// Promo config (code and percent) stored locally
+const PROMO_CFG_KEY = 'mini_promo_cfg_v1'
+export const getPromoConfig = () => {
+  try {
+    const raw = localStorage.getItem(PROMO_CFG_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch(e) {}
+  return { code: 'SKIDKA', percent: 10 }
+}
+export const savePromoConfig = (cfg = { code: '', percent: 0 }) => {
+  try { localStorage.setItem(PROMO_CFG_KEY, JSON.stringify({ code: (cfg.code||'').toUpperCase(), percent: Number(cfg.percent)||0 })) } catch(e) {}
+  return mockRequest({ ok: true })
+}
+
 

@@ -1,14 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { getProducts, saveProducts } from '../api.js'
+import { getProducts, saveProducts, getPromoConfig, savePromoConfig } from '../api.js'
 
 export default function AdminPanel() {
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState([])
   const [q, setQ] = useState('')
   const [cat, setCat] = useState('')
+  const [promoCode, setPromoCode] = useState('')
+  const [promoPercent, setPromoPercent] = useState(0)
 
   useEffect(() => {
     getProducts().then(r => setItems(r.items || [])).finally(() => setLoading(false))
+    const cfg = getPromoConfig()
+    setPromoCode(cfg.code || '')
+    setPromoPercent(cfg.percent || 0)
   }, [])
 
   const categories = useMemo(() => Array.from(new Set(items.map(i => i.category))).filter(Boolean), [items])
@@ -63,6 +68,7 @@ export default function AdminPanel() {
     setLoading(true)
     try {
       await saveProducts(items)
+      await savePromoConfig({ code: promoCode, percent: promoPercent })
       alert('Сохранено')
     } finally { setLoading(false) }
   }
@@ -73,13 +79,17 @@ export default function AdminPanel() {
     <div className="page">
       <div className="toolbar">
         <h1>Админ-панель</h1>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap:'wrap' }}>
           <input className="promo-input" placeholder="Поиск…" value={q} onChange={e => setQ(e.target.value)} />
           <select className="promo-input" value={cat} onChange={e => setCat(e.target.value)}>
             <option value="">Все категории</option>
             {categoryOptions.map(c => <option key={c.value} value={c.value}>{c.title}</option>)}
           </select>
           <button className="secondary" onClick={addItem}>Добавить</button>
+          <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+            <input className="promo-input" placeholder="Промокод" value={promoCode} onChange={e=>setPromoCode(e.target.value)} />
+            <input className="promo-input" type="number" placeholder="%" value={promoPercent} onChange={e=>setPromoPercent(Number(e.target.value)||0)} style={{ width:100 }} />
+          </div>
           <button className="primary" onClick={persist}>Сохранить</button>
         </div>
       </div>
