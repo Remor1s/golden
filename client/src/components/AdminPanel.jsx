@@ -12,6 +12,17 @@ export default function AdminPanel() {
   }, [])
 
   const categories = useMemo(() => Array.from(new Set(items.map(i => i.category))).filter(Boolean), [items])
+  const categoryOptions = useMemo(() => (
+    [
+      { value: 'dav_shampoo', title: 'Шампуни' },
+      { value: 'dav_body', title: 'Гели/Body' },
+      { value: 'dav_cond', title: 'Кондиционеры' },
+      { value: 'dav_mask_treat', title: 'Маски/Уход' },
+      { value: 'dav_leave_in', title: 'Несмываемый уход' },
+      { value: 'dav_styling', title: 'Стайлинг' },
+      { value: 'dav_refil', title: 'Рефил/Скрин' }
+    ]
+  ), [])
 
   const view = useMemo(() => {
     let v = items
@@ -42,7 +53,8 @@ export default function AdminPanel() {
       country: 'Россия',
       badges: [],
       category: 'dav_shampoo',
-      image: ''
+      image: '',
+      description: ''
     }
     setItems(prev => [next, ...prev])
   }
@@ -65,7 +77,7 @@ export default function AdminPanel() {
           <input className="promo-input" placeholder="Поиск…" value={q} onChange={e => setQ(e.target.value)} />
           <select className="promo-input" value={cat} onChange={e => setCat(e.target.value)}>
             <option value="">Все категории</option>
-            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            {categoryOptions.map(c => <option key={c.value} value={c.value}>{c.title}</option>)}
           </select>
           <button className="secondary" onClick={addItem}>Добавить</button>
           <button className="primary" onClick={persist}>Сохранить</button>
@@ -110,7 +122,9 @@ export default function AdminPanel() {
               </div>
               <div className="admin-col">
                 <label>Категория</label>
-                <input className="promo-input" value={p.category||''} onChange={e => updateField(p.id, 'category', e.target.value)} />
+                <select className="promo-input" value={p.category||''} onChange={e => updateField(p.id, 'category', e.target.value)}>
+                  {categoryOptions.map(c => <option key={c.value} value={c.value}>{c.title}</option>)}
+                </select>
               </div>
             </div>
             <div className="admin-row">
@@ -119,6 +133,28 @@ export default function AdminPanel() {
                 <input className="promo-input" value={p.image||''} onChange={e => updateField(p.id, 'image', e.target.value)} />
               </div>
             </div>
+            <div className="admin-row">
+              <div className="admin-col full">
+                <label>Бренд</label>
+                <input className="promo-input" value={p.brand||''} onChange={e => updateField(p.id, 'brand', e.target.value)} />
+              </div>
+            </div>
+            <div className="admin-row">
+              <div className="admin-col full">
+                <label>Описание (запах, ощущения, эффект)</label>
+                <textarea className="promo-input" style={{ minHeight: 90 }} value={p.description||''} onChange={e => updateField(p.id, 'description', e.target.value)} />
+              </div>
+            </div>
+            {!!p.image && (
+              <div className="admin-row">
+                <div className="admin-col full">
+                  <label>Превью</label>
+                  <div style={{ width: 120, height: 120, borderRadius: 12, overflow: 'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    <img src={encodeURI(`${import.meta.env.BASE_URL}${(p.image||'').replace(/^\//,'')}`)} alt={p.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="admin-row end">
               <button className="link" onClick={() => removeItem(p.id)}>Удалить</button>
             </div>

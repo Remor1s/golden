@@ -87,24 +87,27 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
             </div>
           </div>
           <div style={{ display:'flex', flexDirection:'column', gap:8, alignItems:'flex-end' }}>
-            <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-              <button className="icon-btn" aria-label="Закрыть" title="Закрыть" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </button>
-              {(onToggleFavorite || onToggleFavoriteProduct) && (
-                <button
-                  className={"icon-like" + (isFavCur ? ' liked' : '')}
-                  aria-label={isFavCur ? 'Убрать из избранного' : 'В избранное'}
-                  title={isFavCur ? 'Убрать из избранного' : 'В избранное'}
-                  onClick={(e) => { e.stopPropagation(); onToggleFavoriteProduct ? onToggleFavoriteProduct(cur.id) : onToggleFavorite(); }}
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            <div style={{ display:'flex', gap:8, alignItems:'center', width:'100%', justifyContent:'flex-end' }}>
+              <div style={{ display:'flex', gap:8, alignItems:'center', marginRight:'auto' }}>
+                <button className="icon-btn" aria-label="Закрыть" title="Закрыть" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                 </button>
-              )}
+                {(onToggleFavorite || onToggleFavoriteProduct) && (
+                  <button
+                    className={"icon-like" + (isFavCur ? ' liked' : '')}
+                    aria-label={isFavCur ? 'Убрать из избранного' : 'В избранное'}
+                    title={isFavCur ? 'Убрать из избранного' : 'В избранное'}
+                    onClick={(e) => { e.stopPropagation(); onToggleFavoriteProduct ? onToggleFavoriteProduct(cur.id) : onToggleFavorite(); }}
+                    style={{ position:'static' }}
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
             <button className="primary" style={{ padding:'8px 10px', borderRadius:10 }} onClick={(e) => { e.stopPropagation(); onAdd(); setAddedMain(true); setTimeout(()=>setAddedMain(false), 1200); }}>
               {addedMain ? '✓ Добавлено' : 'В корзину'}
@@ -166,12 +169,16 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
                       )}
                     </div>
                     <div style={{ padding:8 }}>
-                      <div style={{ fontSize:12, lineHeight:1.3, height:34, overflow:'hidden' }} title={sp.title}>{sp.title}</div>
+                      <div
+                        style={{ fontSize:12, lineHeight:1.3, height:34, overflow:'hidden', cursor:'pointer' }}
+                        title={sp.title}
+                        onClick={(e) => { e.stopPropagation(); setCur(sp); setDescOpen(false); }}
+                      >{sp.title}</div>
                       <div style={{ display:'flex', gap:6, alignItems:'baseline', margin:'6px 0' }}>
                         <div className="price" style={{ fontSize:13 }}>{sp.price} ₽</div>
                         {sp.oldPrice > 0 && <div className="old" style={{ fontSize:12 }}>{sp.oldPrice} ₽</div>}
                       </div>
-                      <button className="secondary" style={{ width:'100%' }} onClick={() => { onAddProduct && onAddProduct(sp.id); setAddedSet(prev => new Set(prev).add(sp.id)); setTimeout(()=> setAddedSet(prev => { const n = new Set(prev); n.delete(sp.id); return n }), 1200); }}>
+                      <button className="secondary" style={{ width:'100%' }} onClick={(e) => { e.stopPropagation(); onAddProduct && onAddProduct(sp.id); setAddedSet(prev => new Set(prev).add(sp.id)); setTimeout(()=> setAddedSet(prev => { const n = new Set(prev); n.delete(sp.id); return n }), 1200); }}>
                         {addedSet.has(sp.id) ? '✓ Добавлено' : 'В корзину'}
                       </button>
                     </div>

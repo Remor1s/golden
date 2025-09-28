@@ -5,6 +5,7 @@ export default function ProductCard({ product, onAdd, isFavorite = false, onTogg
   const { title, price, oldPrice, badges, volume, brand, country, image } = product
   const [open, setOpen] = useState(false)
   const lastCloseAtRef = useRef(0)
+  const [added, setAdded] = useState(false)
 
   const imgUrl = image ? encodeURI(`${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`) : ''
 
@@ -55,14 +56,22 @@ export default function ProductCard({ product, onAdd, isFavorite = false, onTogg
           <div className="price">{price} ₽</div>
           {oldPrice > 0 && <div className="old">{oldPrice} ₽</div>}
         </div>
-        <button className="primary w-100" onClick={(e) => { e.stopPropagation(); (onAddProduct ? onAddProduct(product.id) : onAdd?.()); }}>В корзину</button>
+        <button
+          className="primary w-100"
+          onClick={(e) => {
+            e.stopPropagation()
+            ;(onAddProduct ? onAddProduct(product.id) : onAdd?.())
+            setAdded(true)
+            setTimeout(() => setAdded(false), 1200)
+          }}
+        >{added ? '✓ Добавлено' : 'В корзину'}</button>
       </div>
 
       {open && (
         <ProductDetails
           product={product}
           onClose={handleClose}
-          onAdd={() => { (onAddProduct ? onAddProduct(product.id) : onAdd?.()); handleClose() }}
+          onAdd={() => { (onAddProduct ? onAddProduct(product.id) : onAdd?.()) }}
           onToggleFavorite={onToggleFavorite || (onToggleFavoriteProduct ? () => onToggleFavoriteProduct(product.id) : undefined)}
           isFavorite={isFavorite}
           allProducts={allProducts}
