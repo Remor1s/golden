@@ -21,6 +21,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [favorites, setFavorites] = useState([])
   const [searchOpen, setSearchOpen] = useState(false)
+  const [cartOpen, setCartOpen] = useState(false)
 
   useEffect(() => {
     // Инициализация Telegram WebApp (если открыто внутри Telegram)
@@ -153,11 +154,7 @@ export default function App() {
     else { setConfirmError('Неверный промокод') }
   }
 
-  const goToCart = () => {
-    if (drawerRef.current) {
-      drawerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }
+  const goToCart = () => { setCartOpen(true) }
 
   if (loading) return <div className="page"><div className="toolbar"><h1>Магазин</h1></div><div className="content">Загрузка…</div></div>
 
@@ -289,6 +286,59 @@ export default function App() {
           <button className="primary" disabled={!payable || placing} onClick={openConfirm}>Оформить</button>
         </div>
       </div>
+      {cartOpen && (
+        <div className="fullscreen-overlay" role="dialog" aria-modal="true" onClick={() => setCartOpen(false)}>
+          <div className="fullscreen-sheet" onClick={e => e.stopPropagation()}>
+            <div className="sheet-title">Корзина</div>
+            {cart.length === 0 && <div className="muted">Пока пусто</div>}
+            {cart.map(i => {
+              const p = products.find(p => p.id === i.productId)
+              return (
+                <div key={i.productId} className="row">
+                  <div className="row-title">{p?.title || i.productId}</div>
+                  <div className="row-qty">×{i.qty}</div>
+                  <div className="row-price">{i.price * i.qty} ₽</div>
+                  <button className="link" onClick={() => handleRemove(i.productId)}>убрать</button>
+                </div>
+              )
+            })}
+            <div className="promo-row">
+              <input
+                className="promo-input"
+                type="text"
+                placeholder="Промокод"
+                value={promoInput}
+                onChange={e => { setPromoInput(e.target.value); setPromoError('') }}
+              />
+              {promoCode ? (
+                <button className="link apply" onClick={() => { setPromoCode(''); setPromoInput(''); setPromoError('') }}>убрать</button>
+              ) : (
+                <button
+                  className="apply primary"
+                  onClick={() => {
+                    const code = (promoInput || '').trim().toUpperCase()
+                    if (code === 'SKIDKA') { setPromoCode(code); setPromoError('') }
+                    else { setPromoError('Неверный промокод') }
+                  }}
+                >Применить</button>
+              )}
+            </div>
+            {promoError && <div className="promo-error">{promoError}</div>}
+            {discount > 0 && (
+              <div className="row total-row">
+                <div className="row-title">Скидка ({discountPercent}%)</div>
+                <div className="row-qty" />
+                <div className="row-price">−{discount} ₽</div>
+                <div />
+              </div>
+            )}
+            <div className="confirm-actions" style={{ marginTop: 14 }}>
+              <button className="link" onClick={() => setCartOpen(false)}>Закрыть</button>
+              <button className="primary" disabled={!payable || placing} onClick={() => { setCartOpen(false); openConfirm() }}>Оформить</button>
+            </div>
+          </div>
+        </div>
+      )}
       {confirmOpen && (
         <div className="confirm-overlay" role="dialog" aria-modal="true">
           <div className="confirm-sheet">

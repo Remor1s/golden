@@ -65,8 +65,8 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
   const [descOpen, setDescOpen] = useState(false)
 
   const node = (
-    <div className="confirm-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-      <div className="confirm-sheet" onClick={e => e.stopPropagation()}>
+    <div className="fullscreen-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+      <div className="fullscreen-sheet" onClick={e => e.stopPropagation()}>
         <div style={{ display:'grid', gridTemplateColumns:'84px 1fr auto', gap:12, alignItems:'center', marginBottom:6 }}>
           <div style={{ width:84, height:84, borderRadius:10, overflow:'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
             {imageUrl ? <img src={imageUrl} alt={product.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}

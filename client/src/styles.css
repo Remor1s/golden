@@ -69,6 +69,11 @@ html, body, #root { height: 100%; margin: 0; background: var(--bg); color: var(-
 .confirm-actions .link { font-size: 16px; padding: 12px 10px; }
 .confirm-actions .primary { font-size: 18px; padding: 14px 18px; border-radius: 14px; }
 
+/* Fullscreen modal (product details / cart) */
+.fullscreen-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 1000; }
+.fullscreen-sheet { position: fixed; inset: 0; background: #fff; padding: 14px 12px calc(12px + env(safe-area-inset-bottom)); overflow: auto; }
+.sheet-title { font-weight: 800; font-size: 18px; margin-bottom: 10px; }
+
 /* Админка */
 .admin-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
 .admin-card { border:1px solid var(--border); border-radius: 12px; padding: 12px; background:#fff; }
