@@ -1,9 +1,20 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { getProducts, getCart, addToCart, removeFromCart, createOrder } from './api.js'
 import ProductCard from './components/ProductCard.jsx'
+import AdminPanel from './components/AdminPanel.jsx'
 import PromoCategories from './components/PromoCategories.jsx'
 
 export default function App() {
+  // Простейший вход в админку без роутера
+  try {
+    const w = window
+    const isAdmin = (
+      w?.location?.hash?.includes('admin') ||
+      /\/admin$/.test(w?.location?.pathname || '') ||
+      new URLSearchParams(w?.location?.search || '').get('admin') === '1'
+    )
+    if (isAdmin) return <AdminPanel />
+  } catch {}
   const [products, setProducts] = useState([])
   const [cart, setCart] = useState([])
   const [loading, setLoading] = useState(true)
