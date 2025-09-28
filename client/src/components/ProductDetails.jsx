@@ -83,23 +83,25 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
             </div>
           </div>
           <div style={{ display:'flex', flexDirection:'column', gap:8, alignItems:'flex-end' }}>
-            <button className="icon-btn" aria-label="Закрыть" title="Закрыть" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </button>
-            {onToggleFavorite && (
-              <button
-                className={"icon-like" + (isFavorite ? ' liked' : '')}
-                aria-label={isFavorite ? 'Убрать из избранного' : 'В избранное'}
-                title={isFavorite ? 'Убрать из избранного' : 'В избранное'}
-                onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+              <button className="icon-btn" aria-label="Закрыть" title="Закрыть" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </button>
-            )}
+              {onToggleFavorite && (
+                <button
+                  className={"icon-like" + (isFavorite ? ' liked' : '')}
+                  aria-label={isFavorite ? 'Убрать из избранного' : 'В избранное'}
+                  title={isFavorite ? 'Убрать из избранного' : 'В избранное'}
+                  onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </button>
+              )}
+            </div>
             <button className="primary" style={{ padding:'8px 10px', borderRadius:10 }} onClick={(e) => { e.stopPropagation(); onAdd(); }}>В корзину</button>
           </div>
         </div>
