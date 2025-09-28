@@ -20,6 +20,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('catalog') // catalog | favorites | search
   const [searchQuery, setSearchQuery] = useState('')
   const [favorites, setFavorites] = useState([])
+  const [searchOpen, setSearchOpen] = useState(false)
 
   useEffect(() => {
     // Инициализация Telegram WebApp (если открыто внутри Telegram)
@@ -171,16 +172,10 @@ export default function App() {
         <div className="tabs" style={{ display: 'flex', gap: 8, alignItems: 'center', position: 'relative' }}>
           <button className={"tab" + (activeTab === 'catalog' ? ' active' : '')} onClick={() => setActiveTab('catalog')}>Все</button>
           <button className={"tab" + (activeTab === 'favorites' ? ' active' : '')} onClick={() => setActiveTab('favorites')}>Избранное</button>
-          <button className={"tab" + (activeTab === 'search' ? ' active' : '')} onClick={() => setActiveTab('search')}>Поиск</button>
-          {activeTab === 'search' && (
-            <input
-              className="search-input"
-              type="search"
-              placeholder="Искать по названию"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
-          )}
+          <button
+            className={"tab" + (activeTab === 'search' ? ' active' : '')}
+            onClick={() => { setActiveTab('search'); setSearchOpen(true) }}
+          >Поиск</button>
           {activeTab === 'favorites' && favorites.length > 0 && (
             <button className="secondary" onClick={clearFavorites} title="Очистить избранное">Очистить</button>
           )}
@@ -222,6 +217,27 @@ export default function App() {
           />
         ))}
       </div>
+
+      {searchOpen && (
+        <>
+          <div className="filter-overlay" onClick={() => setSearchOpen(false)} />
+          <div className="search-popover" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
+            <div className="search-title">Поиск</div>
+            <input
+              autoFocus
+              className="search-input"
+              type="search"
+              placeholder="Искать по названию"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+            <div className="search-actions">
+              <button className="link" onClick={() => { setSearchQuery('') }}>Очистить</button>
+              <button className="primary" onClick={() => setSearchOpen(false)}>Готово</button>
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="drawer" ref={drawerRef}>
         <div className="drawer-title">Корзина</div>
