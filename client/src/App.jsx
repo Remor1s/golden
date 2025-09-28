@@ -23,6 +23,8 @@ export default function App() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const [activeNav, setActiveNav] = useState('catalog') // home|catalog|cart|fav|profile
+  const [visibleCount, setVisibleCount] = useState(20)
+  const sentinelRef = useRef(null)
 
   useEffect(() => {
     // Инициализация Telegram WebApp (если открыто внутри Telegram)
@@ -103,6 +105,27 @@ export default function App() {
     return filteredProducts
   }, [activeTab, filteredProducts, searchFilteredProducts, favoriteProducts])
 
+  const slicedProducts = useMemo(() => displayedProducts.slice(0, visibleCount), [displayedProducts, visibleCount])
+
+  useEffect(() => {
+    // Сброс пагинации при смене источника данных
+    setVisibleCount(20)
+  }, [activeTab, searchQuery, selectedCategories])
+
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+    const obs = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          setVisibleCount((c) => (c < displayedProducts.length ? Math.min(c + 20, displayedProducts.length) : c))
+        }
+      }
+    }, { rootMargin: '200px 0px' })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [displayedProducts])
+
   const toggleCategory = (value) => {
     setSelectedCategories(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value])
   }
@@ -166,7 +189,7 @@ export default function App() {
       <PromoCategories />
       
       <div className="toolbar">
-        <h1>Каталог</h1>
+        <h1>{activeTab === 'favorites' ? 'Избранное' : (activeTab === 'search' ? 'Поиск' : 'Каталог')}</h1>
         <div className="tabs" style={{ display: 'flex', gap: 8, alignItems: 'center', position: 'relative' }}>
           <button className="icon-btn" aria-label="Фильтры" title="Фильтры" onClick={() => setFilterOpen(v => !v)}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -195,8 +218,11 @@ export default function App() {
         </div>
         
       </div>
+      {activeTab === 'favorites' && displayedProducts.length === 0 && (
+        <div style={{ fontWeight:800, padding:'16px 4px' }}>Избранное пусто</div>
+      )}
       <div className="grid">
-        {displayedProducts.map(p => (
+        {slicedProducts.map(p => (
           <ProductCard
             key={p.id}
             product={p}
@@ -207,11 +233,15 @@ export default function App() {
             isFavoriteId={(id) => favorites.includes(id)}
           />
         ))}
+        {/* Сентинел для подгрузки */}
+        {slicedProducts.length < displayedProducts.length && (
+          <div ref={sentinelRef} style={{ height: 1 }} />
+        )}
       </div>
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <button className={"nav-btn" + (activeNav==='home'?' active':'')} onClick={() => setActiveNav('home')}>
+        <button className={"nav-btn" + (activeNav==='home'?' active':'')} onClick={() => { setActiveNav('home'); setActiveTab('catalog'); setSearchOpen(false); setFilterOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2v-9z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
           <span className="label">Главная</span>
         </button>
@@ -304,7 +334,7 @@ export default function App() {
         <div className="fullscreen-overlay" role="dialog" aria-modal="true" onClick={() => setCartOpen(false)}>
           <div className="fullscreen-sheet" onClick={e => e.stopPropagation()}>
             <div className="sheet-title">Корзина</div>
-            {cart.length === 0 && <div className="muted">Пока пусто</div>}
+            {cart.length === 0 && <div className="muted" style={{ marginBottom: 10 }}>Пока пусто</div>}
             {cart.map(i => {
               const p = products.find(p => p.id === i.productId)
               return (
