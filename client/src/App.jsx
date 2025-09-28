@@ -347,9 +347,33 @@ export default function App() {
               </div>
             )}
             <div className="confirm-actions" style={{ marginTop: 14 }}>
-              <button className="link" onClick={() => setCartOpen(false)}>Закрыть</button>
+              <button className="primary" onClick={() => setCartOpen(false)}>Отмена</button>
               <button className="primary" disabled={!payable || placing} onClick={() => { setCartOpen(false); openConfirm() }}>Оформить</button>
             </div>
+
+            {/* Рекомендации в корзине */}
+            {products.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div className="sheet-title" style={{ marginBottom: 8 }}>Вам может понравиться</div>
+                <div style={{ display:'flex', gap:10, overflowX:'auto', paddingBottom:6 }}>
+                  {products.slice(0, 16).map(p => (
+                    <div key={p.id} style={{ minWidth: 160, border:'1px solid var(--border)', borderRadius:12, overflow:'hidden', background:'#fff' }}>
+                      <div style={{ width:160, height:120, background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                        {p.image ? <img src={encodeURI(`${import.meta.env.BASE_URL}${p.image.replace(/^\//,'')}`)} alt={p.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
+                      </div>
+                      <div style={{ padding:8 }}>
+                        <div style={{ fontSize:12, lineHeight:1.3, height:34, overflow:'hidden' }} title={p.title}>{p.title}</div>
+                        <div style={{ display:'flex', gap:6, alignItems:'baseline', margin:'6px 0' }}>
+                          <div className="price" style={{ fontSize:13 }}>{p.price} ₽</div>
+                          {p.oldPrice > 0 && <div className="old" style={{ fontSize:12 }}>{p.oldPrice} ₽</div>}
+                        </div>
+                        <button className="secondary" style={{ width:'100%' }} onClick={() => handleAdd(p.id)}>В корзину</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
