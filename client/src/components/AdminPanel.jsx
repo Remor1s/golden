@@ -171,6 +171,32 @@ export default function AdminPanel() {
           </div>
         ))}
       </div>
+
+      {/* Предпросмотр каталога (дубликат карточек) */}
+      <div style={{ marginTop: 16 }}>
+        <div className="sheet-title" style={{ marginBottom: 8 }}>Предпросмотр каталога</div>
+        <div className="grid">
+          {items.map(p => {
+            const img = p.image ? encodeURI(`${import.meta.env.BASE_URL}${p.image.replace(/^\//,'')}`) : ''
+            return (
+              <div key={`preview-${p.id}`} className="card">
+                <div className="media">
+                  {img ? <img className="media-img" src={img} alt={p.title} /> : <div className="placeholder">4:5</div>}
+                  {!!(p.badges && p.badges.length) && <span className="badge">{p.badges[0]}</span>}
+                </div>
+                <div className="info">
+                  <div className="title" title={p.title}>{p.title}</div>
+                  <div className="meta">{[p.brand, p.volume].filter(Boolean).join(' · ')}</div>
+                  <div className="price-row">
+                    <div className="price">{p.price} ₽</div>
+                    {p.oldPrice > 0 && <div className="old">{p.oldPrice} ₽</div>}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
