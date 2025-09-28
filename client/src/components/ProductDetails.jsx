@@ -60,26 +60,30 @@ function getSpecsFor(product) {
 }
 
 export default function ProductDetails({ product, onClose, onAdd, isFavorite = false, onToggleFavorite, allProducts = [], onAddProduct, onToggleFavoriteProduct, isFavoriteId }) {
-  const specs = useMemo(() => getSpecsFor(product), [product])
-  const imageUrl = product.image ? encodeURI(`${import.meta.env.BASE_URL}${product.image.replace(/^\//, '')}`) : ''
+  const [cur, setCur] = useState(product)
+  const specs = useMemo(() => getSpecsFor(cur), [cur])
+  const imageUrl = cur.image ? encodeURI(`${import.meta.env.BASE_URL}${cur.image.replace(/^\//, '')}`) : ''
   const [descOpen, setDescOpen] = useState(false)
+  const [addedMain, setAddedMain] = useState(false)
+  const [addedSet, setAddedSet] = useState(() => new Set())
+  const isFavCur = isFavoriteId ? !!isFavoriteId(cur.id) : (isFavorite && cur.id === product.id)
   const similar = useMemo(() => {
     const list = Array.isArray(allProducts) ? allProducts : []
-    return list.filter(p => p.category === product.category && p.id !== product.id).slice(0, 12)
-  }, [allProducts, product])
+    return list.filter(p => p.category === cur.category && p.id !== cur.id).slice(0, 12)
+  }, [allProducts, cur])
 
   const node = (
     <div className="fullscreen-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); onClose(); }}>
       <div className="fullscreen-sheet" onClick={e => e.stopPropagation()}>
         <div style={{ display:'grid', gridTemplateColumns:'84px 1fr auto', gap:12, alignItems:'center', marginBottom:6 }}>
           <div style={{ width:84, height:84, borderRadius:10, overflow:'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
-            {imageUrl ? <img src={imageUrl} alt={product.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
+            {imageUrl ? <img src={imageUrl} alt={cur.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
           </div>
           <div>
-            <div style={{ fontWeight:700, marginBottom:6 }}>{product.title}</div>
+            <div style={{ fontWeight:700, marginBottom:6 }}>{cur.title}</div>
             <div style={{ display:'flex', gap:8, alignItems:'baseline' }}>
-              <div className="price" style={{ fontSize:18 }}>{product.price} ₽</div>
-              {product.oldPrice > 0 && <div className="old">{product.oldPrice} ₽</div>}
+              <div className="price" style={{ fontSize:18 }}>{cur.price} ₽</div>
+              {cur.oldPrice > 0 && <div className="old">{cur.oldPrice} ₽</div>}
             </div>
           </div>
           <div style={{ display:'flex', flexDirection:'column', gap:8, alignItems:'flex-end' }}>
@@ -89,12 +93,12 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
                   <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </button>
-              {onToggleFavorite && (
+              {(onToggleFavorite || onToggleFavoriteProduct) && (
                 <button
-                  className={"icon-like" + (isFavorite ? ' liked' : '')}
-                  aria-label={isFavorite ? 'Убрать из избранного' : 'В избранное'}
-                  title={isFavorite ? 'Убрать из избранного' : 'В избранное'}
-                  onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+                  className={"icon-like" + (isFavCur ? ' liked' : '')}
+                  aria-label={isFavCur ? 'Убрать из избранного' : 'В избранное'}
+                  title={isFavCur ? 'Убрать из избранного' : 'В избранное'}
+                  onClick={(e) => { e.stopPropagation(); onToggleFavoriteProduct ? onToggleFavoriteProduct(cur.id) : onToggleFavorite(); }}
                 >
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -102,7 +106,9 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
                 </button>
               )}
             </div>
-            <button className="primary" style={{ padding:'8px 10px', borderRadius:10 }} onClick={(e) => { e.stopPropagation(); onAdd(); }}>В корзину</button>
+            <button className="primary" style={{ padding:'8px 10px', borderRadius:10 }} onClick={(e) => { e.stopPropagation(); onAdd(); setAddedMain(true); setTimeout(()=>setAddedMain(false), 1200); }}>
+              {addedMain ? '✓ Добавлено' : 'В корзину'}
+            </button>
           </div>
         </div>
 
@@ -114,7 +120,7 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
         </div>
         {descOpen && (
           <div style={{ fontSize:14, color:'#333', lineHeight:1.5 }}>
-            {product.description || 'Аромат: свежий, чистый. Ощущения: комфортная текстура, легко смывается. Эффект: мягкость, блеск, лёгкость расчёсывания.'}
+            {cur.description || 'Аромат: свежий, чистый. Ощущения: комфортная текстура, легко смывается. Эффект: мягкость, блеск, лёгкость расчёсывания.'}
           </div>
         )}
 
@@ -140,7 +146,7 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
                 return (
                   <div key={sp.id} style={{ minWidth: 160, border:'1px solid var(--border)', borderRadius: 12, overflow:'hidden', background:'#fff' }}>
                     <div style={{ position:'relative' }}>
-                      <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); /* открыть детально этот товар */ window.scrollTo(0,0); }} style={{ textDecoration:'none', color:'inherit', display:'block' }}>
+                      <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCur(sp); setDescOpen(false); }} style={{ textDecoration:'none', color:'inherit', display:'block' }}>
                         <div style={{ width:160, height:130, background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
                           {simImg ? <img src={simImg} alt={sp.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
                         </div>
@@ -165,7 +171,9 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
                         <div className="price" style={{ fontSize:13 }}>{sp.price} ₽</div>
                         {sp.oldPrice > 0 && <div className="old" style={{ fontSize:12 }}>{sp.oldPrice} ₽</div>}
                       </div>
-                      <button className="secondary" style={{ width:'100%' }} onClick={() => onAddProduct && onAddProduct(sp.id)}>В корзину</button>
+                      <button className="secondary" style={{ width:'100%' }} onClick={() => { onAddProduct && onAddProduct(sp.id); setAddedSet(prev => new Set(prev).add(sp.id)); setTimeout(()=> setAddedSet(prev => { const n = new Set(prev); n.delete(sp.id); return n }), 1200); }}>
+                        {addedSet.has(sp.id) ? '✓ Добавлено' : 'В корзину'}
+                      </button>
                     </div>
                   </div>
                 )
