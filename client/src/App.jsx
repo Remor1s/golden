@@ -22,6 +22,7 @@ export default function App() {
   const [favorites, setFavorites] = useState([])
   const [searchOpen, setSearchOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
+  const [activeNav, setActiveNav] = useState('catalog') // home|catalog|cart|fav|profile
 
   useEffect(() => {
     // Инициализация Telegram WebApp (если открыто внутри Telegram)
@@ -215,6 +216,30 @@ export default function App() {
             isFavoriteId={(id) => favorites.includes(id)}
           />
         ))}
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="bottom-nav">
+        <button className={"nav-btn" + (activeNav==='home'?' active':'')} onClick={() => setActiveNav('home')}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2v-9z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <span className="label">Главная</span>
+        </button>
+        <button className={"nav-btn" + (activeNav==='catalog'?' active':'')} onClick={() => { setActiveNav('catalog'); setActiveTab('catalog'); }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2"/><path d="M21 21l-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+          <span className="label">Каталог</span>
+        </button>
+        <button className={"nav-btn" + (activeNav==='cart'?' active':'')} onClick={() => { setActiveNav('cart'); setCartOpen(true); }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h15l-1.5 9h-12z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="9" cy="20" r="1.6" fill="currentColor"/><circle cx="18" cy="20" r="1.6" fill="currentColor"/></svg>
+          <span className="label">Корзина</span>
+        </button>
+        <button className={"nav-btn" + (activeNav==='fav'?' active':'')} onClick={() => { setActiveNav('fav'); setActiveTab('favorites'); }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.22 2.61C11.09 5.01 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" strokeWidth="2" fill="none"/></svg>
+          <span className="label">Избранное</span>
+        </button>
+        <button className={"nav-btn" + (activeNav==='profile'?' active':'')} onClick={() => setActiveNav('profile')}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="3.2" stroke="currentColor" strokeWidth="2"/><path d="M4 20c1.6-3.6 5-6 8-6s6.4 2.4 8 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+          <span className="label">Профиль</span>
+        </button>
       </div>
 
       {searchOpen && (
