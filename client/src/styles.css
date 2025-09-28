@@ -73,6 +73,13 @@ html, body, #root { height: 100%; margin: 0; background: var(--bg); color: var(-
 .qty { min-width: 16px; text-align: center; font-weight: 700; }
 .trash-btn { width:32px; height:32px; border-radius:8px; border:1px solid #f1d1d1; background:#fff; color:#d32f2f; display:flex; align-items:center; justify-content:center; cursor:pointer; margin-left:auto; }
 
+/* Более компактная карточка именно в drawer */
+.drawer .cart-card { grid-template-columns: 56px 1fr; }
+.drawer .cart-card-media { width: 56px; height: 56px; }
+.drawer .cart-card-info { padding: 6px 6px; }
+.drawer .cart-card-title { max-height: 30px; }
+.drawer .qty-btn { width:26px; height:26px; }
+
 /* Модалка подтверждения */
 .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display:flex; align-items:flex-end; justify-content:center; z-index: 1000; }
 .confirm-sheet { width: 100%; max-width: 1100px; background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-radius: 16px 16px 0 0; padding: 14px 12px calc(12px + env(safe-area-inset-bottom)); box-shadow: 0 -20px 40px rgba(0,0,0,.25); }
