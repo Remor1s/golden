@@ -92,18 +92,7 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
           )}
         </div>
 
-        <div style={{ fontWeight:700, marginTop:6, marginBottom:6 }}>Подробные характеристики</div>
-        <div className="specs">
-          {specs.map(row => (
-            <div key={row.label} className="spec-row">
-              <span className="spec-label">{row.label}</span>
-              <span className="spec-dots" aria-hidden="true" />
-              <span className="spec-value">{row.value}</span>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ fontWeight:700, marginTop:10, marginBottom:6, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <div style={{ fontWeight:700, marginTop:6, marginBottom:6, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <span>Описание</span>
           <button className="icon-btn" aria-label="Раскрыть описание" onClick={() => setDescOpen(v => !v)}>
             {descOpen ? '−' : '+'}
@@ -114,6 +103,17 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
             {product.description || 'Аромат: свежий, чистый. Ощущения: комфортная текстура, легко смывается. Эффект: мягкость, блеск, лёгкость расчёсывания.'}
           </div>
         )}
+
+        <div style={{ fontWeight:700, marginTop:10, marginBottom:6 }}>Подробные характеристики</div>
+        <div className="specs">
+          {specs.map(row => (
+            <div key={row.label} className="spec-row">
+              <span className="spec-label">{row.label}</span>
+              <span className="spec-dots" aria-hidden="true" />
+              <span className="spec-value">{row.value}</span>
+            </div>
+          ))}
+        </div>
 
         <div className="confirm-actions" style={{ marginTop:10 }}>
           <button className="link" onClick={onClose}>Закрыть</button>
