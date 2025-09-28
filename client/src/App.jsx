@@ -36,20 +36,8 @@ export default function App() {
         // Блокируем закрытие свайпом вниз (как в SheBanShe)
         if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes()
 
-        // Показ зелёной кнопки «Каталог» как в Telegram (MainButton)
-        const onMainButtonClick = () => {
-          // Скролл к началу каталога (или к корзине, если нужно)
-          if (drawerRef.current) {
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          }
-        }
-        tg.MainButton?.setParams?.({ text: 'Каталог', color: '#30d158', text_color: '#ffffff' })
-        tg.MainButton?.onClick?.(onMainButtonClick)
-        tg.MainButton?.show?.()
-        cleanup = () => {
-          tg.MainButton?.offClick?.(onMainButtonClick)
-          tg.MainButton?.hide?.()
-        }
+        // Скрываем системную MainButton в Telegram
+        tg.MainButton?.hide?.()
       }
     } catch {}
     Promise.all([getProducts(), getCart()])
