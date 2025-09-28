@@ -63,7 +63,7 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
   const [cur, setCur] = useState(product)
   const specs = useMemo(() => getSpecsFor(cur), [cur])
   const imageUrl = cur.image ? encodeURI(`${import.meta.env.BASE_URL}${cur.image.replace(/^\//, '')}`) : ''
-  const [descOpen, setDescOpen] = useState(false)
+  const [descOpen, setDescOpen] = useState(true)
   const [addedMain, setAddedMain] = useState(false)
   const [addedSet, setAddedSet] = useState(() => new Set())
   const isFavCur = isFavoriteId ? !!isFavoriteId(cur.id) : (isFavorite && cur.id === product.id)
@@ -145,7 +145,7 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
                 return (
                   <div key={sp.id} style={{ minWidth: 160, border:'1px solid var(--border)', borderRadius: 12, overflow:'hidden', background:'#fff' }}>
                     <div style={{ position:'relative' }}>
-                      <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCur(sp); setDescOpen(false); }} style={{ textDecoration:'none', color:'inherit', display:'block' }}>
+                      <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCur(sp); setDescOpen(true); }} style={{ textDecoration:'none', color:'inherit', display:'block' }}>
                         <div style={{ width:160, height:130, background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
                           {simImg ? <img src={simImg} alt={sp.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
                         </div>
@@ -168,7 +168,7 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
                       <div
                         style={{ fontSize:12, lineHeight:1.3, height:34, overflow:'hidden', cursor:'pointer' }}
                         title={sp.title}
-                        onClick={(e) => { e.stopPropagation(); setCur(sp); setDescOpen(false); }}
+                        onClick={(e) => { e.stopPropagation(); setCur(sp); setDescOpen(true); }}
                       >{sp.title}</div>
                       <div style={{ display:'flex', gap:6, alignItems:'baseline', margin:'6px 0' }}>
                         <div className="price" style={{ fontSize:13 }}>{sp.price} ₽</div>
