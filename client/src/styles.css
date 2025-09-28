@@ -71,7 +71,8 @@ html, body, #root { height: 100%; margin: 0; background: var(--bg); color: var(-
 .qty-control { display:flex; align-items:center; gap:8px; }
 .qty-btn { width:28px; height:28px; border-radius:8px; border:1px solid var(--border); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; line-height:1; -webkit-appearance:none; appearance:none; }
 .qty { min-width: 16px; text-align: center; font-weight: 700; }
-.trash-btn { width:28px; height:28px; border-radius:8px; border:1px solid var(--border); background:#fff; color:#d32f2f; display:flex; align-items:center; justify-content:center; cursor:pointer; margin-left:auto; padding:0; line-height:1; -webkit-appearance:none; appearance:none; }
+.trash-btn { width:28px; height:28px; border-radius:8px; border:1px solid var(--border); background:#fff; color:#111; display:flex; align-items:center; justify-content:center; cursor:pointer; margin-left:auto; padding:0; line-height:1; -webkit-appearance:none; appearance:none; }
+.trash-btn svg { width:16px; height:16px; }
 
 /* Более компактная карточка именно в drawer */
 .drawer .cart-card { grid-template-columns: 56px 1fr; }
@@ -79,7 +80,7 @@ html, body, #root { height: 100%; margin: 0; background: var(--bg); color: var(-
 .drawer .cart-card-info { padding: 6px 6px; }
 .drawer .cart-card-title { max-height: 30px; }
 .drawer .qty-btn { width:26px; height:26px; }
-.drawer .trash-btn { width:26px; height:26px; }
+.drawer .trash-btn { width:26px; height:26px; color:#111; border-color: var(--border); }
 .drawer .price { font-size: 16px; }
 
 /* Модалка подтверждения */

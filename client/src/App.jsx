@@ -380,36 +380,7 @@ export default function App() {
                 )
               })}
             </div>
-            <div className="promo-row">
-              <input
-                className="promo-input"
-                type="text"
-                placeholder="Промокод"
-                value={promoInput}
-                onChange={e => { setPromoInput(e.target.value); setPromoError('') }}
-              />
-              {promoCode ? (
-                <button className="link apply" onClick={() => { setPromoCode(''); setPromoInput(''); setPromoError('') }}>убрать</button>
-              ) : (
-                <button
-                  className="apply primary"
-                  onClick={() => {
-                    const code = (promoInput || '').trim().toUpperCase()
-                    if (code === 'SKIDKA') { setPromoCode(code); setPromoError('') }
-                    else { setPromoError('Неверный промокод') }
-                  }}
-                >Применить</button>
-              )}
-            </div>
-            {promoError && <div className="promo-error">{promoError}</div>}
-            {discount > 0 && (
-              <div className="row total-row">
-                <div className="row-title">Скидка ({discountPercent}%)</div>
-                <div className="row-qty" />
-                <div className="row-price">−{discount} ₽</div>
-                <div />
-              </div>
-            )}
+            {/* Убрали промокод и скидку из полноэкранной корзины */}
             <div className="confirm-actions" style={{ marginTop: 14 }}>
               <button className="primary" onClick={() => setCartOpen(false)}>Отмена</button>
               <button className="primary" disabled={!payable || placing} onClick={() => { setCartOpen(false); openConfirm() }}>Оформить</button>
