@@ -132,7 +132,10 @@ app.post('/api/payments/yookassa', async (req, res) => {
       body: JSON.stringify(payload)
     })
     const data = await r.json()
-    if (!r.ok) return res.status(r.status).json({ error: 'yookassa_error', details: data })
+    if (!r.ok) {
+      const message = (data && (data.description || data.message || (Array.isArray(data.errors) && data.errors.map(e=>e.description||e.code).filter(Boolean).join('; ')))) || 'YooKassa error'
+      return res.status(r.status).json({ error: 'yookassa_error', message, details: data })
+    }
 
     // Не очищаем корзину до подтверждения оплаты
     const confirmationUrl = data?.confirmation?.confirmation_url || null
