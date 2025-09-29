@@ -298,6 +298,19 @@ export const createOrder = (payload = {}) => {
   return mockRequest(order)
 }
 
+// ЮKassa: запрос на создание платежа (через сервер)
+export const createYooKassaPayment = async (returnUrl) => {
+  if (!API) throw new Error('API endpoint is required for payments')
+  const res = await fetch(`${API}/api/payments/yookassa`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-user-id': uid() },
+    body: JSON.stringify({ returnUrl })
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data?.error || 'payment_failed')
+  return data
+}
+
 export const saveProducts = async (items) => {
   try {
     const res = await fetch(`${API}/api/admin/products`, {

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react'
-import { getProducts, getCart, addToCart, removeFromCart, createOrder } from './api.js'
+import { getProducts, getCart, addToCart, removeFromCart, createOrder, createYooKassaPayment } from './api.js'
 import ProductCard from './components/ProductCard.jsx'
 import AdminPanel from './components/AdminPanel.jsx'
 import PromoCategories from './components/PromoCategories.jsx'
@@ -175,17 +175,20 @@ export default function App() {
   const handleCheckout = async () => {
     setPlacing(true)
     try {
-      const order = await createOrder({
-        total,
-        promoCode,
-        discountPercent,
-        discount,
-        payable
-      })
-      alert(`Заказ создан: ${order.id}, сумма ${order.payable || order.total} ₽`)
-      const c = await getCart()
-      setCart(c.items || [])
-    } finally { setPlacing(false); setConfirmOpen(false) }
+      const w = window
+      const returnUrl = `${w.location.origin}${w.location.pathname}`
+      const payment = await createYooKassaPayment(returnUrl)
+      if (payment?.confirmation_url) {
+        setConfirmOpen(false)
+        w.location.href = payment.confirmation_url
+      } else {
+        alert('Не удалось получить ссылку на оплату')
+      }
+    } catch (e) {
+      alert('Ошибка оплаты')
+    } finally {
+      setPlacing(false)
+    }
   }
 
   const openConfirm = () => {

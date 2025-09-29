@@ -95,6 +95,52 @@ app.delete('/api/cart/:productId', (req, res) => {
   res.json({ items: cart })
 })
 
+// ЮKassa: создание платежа (redirect confirmation)
+app.post('/api/payments/yookassa', async (req, res) => {
+  try {
+    const uid = getUserId(req)
+    const cart = dbMem.cartByUser.get(uid) || []
+    if (!cart.length) return res.status(400).json({ error: 'Cart is empty' })
+
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0)
+    const value = (Math.max(total, 0)).toFixed(2)
+
+    const shopId = process.env.YK_SHOP_ID || 'YOvU7IJDG8irfulcAE'
+    const secretKey = process.env.YK_SECRET_KEY || 'test_czsb3RSFtF03EX1eLvDeVMcDg'
+    const auth = Buffer.from(`${shopId}:${secretKey}`).toString('base64')
+    const idempotenceKey = `${Date.now()}-${Math.random().toString(36).slice(2)}`
+    const returnUrl = (req.body && req.body.returnUrl) || (process.env.RETURN_URL || 'https://example.com')
+
+    const payload = {
+      amount: { value, currency: 'RUB' },
+      capture: true,
+      confirmation: { type: 'redirect', return_url: returnUrl },
+      description: `Оплата заказа ${uid}`,
+      metadata: { uid, items: cart.map(i => ({ productId: i.productId, qty: i.qty, price: i.price })) }
+    }
+
+    const r = await fetch('https://api.yookassa.ru/v3/payments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${auth}`,
+        'Idempotence-Key': idempotenceKey
+      },
+      body: JSON.stringify(payload)
+    })
+    const data = await r.json()
+    if (!r.ok) {
+      return res.status(r.status).json({ error: 'yookassa_error', details: data })
+    }
+
+    // Не очищаем корзину до подтверждения оплаты
+    const confirmationUrl = data?.confirmation?.confirmation_url || null
+    res.json({ id: data.id, status: data.status, confirmation_url: confirmationUrl })
+  } catch (e) {
+    res.status(500).json({ error: 'server_error' })
+  }
+})
+
 // Заказ (без реальной оплаты, только заглушка)
 app.post('/api/orders', (req, res) => {
   const uid = getUserId(req)
