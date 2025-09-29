@@ -114,12 +114,14 @@ app.post('/api/payments/yookassa', async (req, res) => {
     const idempotenceKey = `${Date.now()}-${Math.random().toString(36).slice(2)}`
     const returnUrl = (req.body && req.body.returnUrl) || (process.env.RETURN_URL || 'https://example.com')
 
+    // metadata в YooKassa не поддерживает вложенные объекты/массивы
+    const itemsSummary = cart.map(i => `${i.productId}x${i.qty}`).slice(0, 20).join(',')
     const payload = {
       amount: { value, currency: 'RUB' },
       capture: true,
       confirmation: { type: 'redirect', return_url: returnUrl },
       description: `Оплата заказа ${uid}`,
-      metadata: { uid, items: cart.map(i => ({ productId: i.productId, qty: i.qty, price: i.price })) }
+      metadata: { uid: String(uid), items: itemsSummary }
     }
 
     const r = await fetch('https://api.yookassa.ru/v3/payments', {
