@@ -105,10 +105,17 @@ app.post('/api/payments/yookassa', async (req, res) => {
     const total = cart.reduce((s, i) => s + i.price * i.qty, 0)
     const value = (Math.max(total, 0)).toFixed(2)
 
-    const shopId = process.env.YK_SHOP_ID || 'YOvU7IJDG8irfulcAE'
-    const secretKey = process.env.YK_SECRET_KEY || 'test_czsb3RSFtF03EX1eLvDeVMcDg'
+    let shopId = process.env.YK_SHOP_ID || ''
+    let secretKey = process.env.YK_SECRET_KEY || ''
     if (!shopId || !secretKey) {
       return res.status(500).json({ error: 'config_error', message: 'YK_SHOP_ID/YK_SECRET_KEY не заданы' })
+    }
+    // Автокоррекция: если перепутали местами (shopId=test_..., secretKey=...)
+    if (/^test_/.test(shopId) && !/^test_/.test(secretKey)) {
+      const tmp = shopId; shopId = secretKey; secretKey = tmp
+    }
+    if (!/^\d+$/.test(shopId)) {
+      return res.status(400).json({ error: 'config_error', message: 'YK_SHOP_ID должен быть числом (идентификатор магазина ЮKassa из кабинета). Пример: 123456.' })
     }
     const auth = Buffer.from(`${shopId}:${secretKey}`).toString('base64')
     const idempotenceKey = `${Date.now()}-${Math.random().toString(36).slice(2)}`
