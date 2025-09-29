@@ -109,6 +109,18 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
   const node = (
     <div className="fullscreen-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); onClose(); }}>
       <div className="fullscreen-sheet" onClick={e => e.stopPropagation()} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+        {/* Top actions: Close and Back */}
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+          <div />
+          <button className="icon-btn" aria-label="Закрыть" title="Закрыть" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div style={{ marginBottom:8 }}>
+          <button className="primary" style={{ padding:'8px 10px', borderRadius:10 }} onClick={(e) => { e.stopPropagation(); onClose(); }}>Назад</button>
+        </div>
         <div style={{ display:'grid', gridTemplateColumns:'84px 1fr auto', gap:12, alignItems:'center', marginBottom:6 }}>
           <div style={{ width:84, height:84, borderRadius:10, overflow:'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
             {imageUrl ? <img src={imageUrl} alt={cur.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
@@ -123,7 +135,6 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
           <div style={{ display:'flex', flexDirection:'column', gap:8, alignItems:'flex-end' }}>
             <div style={{ display:'flex', gap:8, alignItems:'center', width:'100%', justifyContent:'flex-end' }}>
               <div style={{ display:'flex', gap:8, alignItems:'center', marginRight:'auto' }}>
-              <button className="primary" style={{ padding:'8px 10px', borderRadius:10, background:'#111', color:'#fff' }} onClick={(e) => { e.stopPropagation(); onClose(); }}>Назад</button>
                 {(onToggleFavorite || onToggleFavoriteProduct) && (
                   <button
                     className={"icon-like" + (isFavCur ? ' liked' : '')}
