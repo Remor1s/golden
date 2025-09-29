@@ -46,13 +46,9 @@ export default function App() {
         const tg = w.Telegram.WebApp
         tg.ready()
         if (typeof tg.expand === 'function') tg.expand()
-        // Белый фон за страницей WebApp (виден при «протяжке»)
         if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#ffffff')
         if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#ffffff')
-        // Блокируем закрытие свайпом вниз (как в SheBanShe)
         if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes()
-
-        // Telegram WebApp инициализация без MainButton
       }
     } catch {}
     Promise.all([getProducts(), getCart()])

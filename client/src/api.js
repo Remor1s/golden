@@ -268,22 +268,48 @@ export const getProducts = async () => {
   return mockRequest({ items: db.products })
 }
 
-export const getCart = () => mockRequest({ items: db.cart })
-
-export const addToCart = (productId, qty = 1) => {
-  const product = db.products.find(p => p.id === productId)
-  if (!product) return Promise.reject(new Error('Invalid productId'))
-
-  const existing = db.cart.find(i => i.productId === productId)
-  if (existing) {
-    existing.qty += qty
-  } else {
-    db.cart.push({ productId, qty, price: product.price, title: product.title })
+export const getCart = async () => {
+  if (API) {
+    try {
+      const res = await fetch(`${API}/api/cart`, {
+        headers: { 'x-user-id': uid() }
+      })
+      if (res.ok) return res.json()
+    } catch(e) {}
   }
   return mockRequest({ items: db.cart })
 }
 
-export const removeFromCart = (productId) => {
+export const addToCart = async (productId, qty = 1) => {
+  if (API) {
+    try {
+      const res = await fetch(`${API}/api/cart`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': uid() },
+        body: JSON.stringify({ productId, qty })
+      })
+      if (res.ok) return res.json()
+    } catch(e) {}
+  }
+  // Fallback: локальная корзина
+  const product = db.products.find(p => p.id === productId)
+  if (!product) return Promise.reject(new Error('Invalid productId'))
+  const existing = db.cart.find(i => i.productId === productId)
+  if (existing) existing.qty += qty
+  else db.cart.push({ productId, qty, price: product.price, title: product.title })
+  return mockRequest({ items: db.cart })
+}
+
+export const removeFromCart = async (productId) => {
+  if (API) {
+    try {
+      const res = await fetch(`${API}/api/cart/${productId}`, {
+        method: 'DELETE',
+        headers: { 'x-user-id': uid() }
+      })
+      if (res.ok) return res.json()
+    } catch(e) {}
+  }
   db.cart = db.cart.filter(i => i.productId !== productId)
   return mockRequest({ items: db.cart })
 }
