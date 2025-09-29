@@ -300,14 +300,17 @@ export const createOrder = (payload = {}) => {
 
 // ЮKassa: запрос на создание платежа (через сервер)
 export const createYooKassaPayment = async (returnUrl) => {
-  if (!API) throw new Error('API endpoint is required for payments')
+  if (!API) throw new Error('Не задан API (VITE_API_URL). Оплата недоступна.')
   const res = await fetch(`${API}/api/payments/yookassa`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-user-id': uid() },
     body: JSON.stringify({ returnUrl })
   })
   const data = await res.json()
-  if (!res.ok) throw new Error(data?.error || 'payment_failed')
+  if (!res.ok) {
+    const msg = data?.message || data?.error || (data?.details && data.details?.description) || 'Ошибка оплаты'
+    throw new Error(msg)
+  }
   return data
 }
 

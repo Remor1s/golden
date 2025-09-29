@@ -185,7 +185,7 @@ export default function App() {
         alert('Не удалось получить ссылку на оплату')
       }
     } catch (e) {
-      alert('Ошибка оплаты')
+      alert(`Ошибка оплаты: ${e?.message || e}`)
     } finally {
       setPlacing(false)
     }

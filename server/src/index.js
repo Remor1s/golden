@@ -107,6 +107,9 @@ app.post('/api/payments/yookassa', async (req, res) => {
 
     const shopId = process.env.YK_SHOP_ID || 'YOvU7IJDG8irfulcAE'
     const secretKey = process.env.YK_SECRET_KEY || 'test_czsb3RSFtF03EX1eLvDeVMcDg'
+    if (!shopId || !secretKey) {
+      return res.status(500).json({ error: 'config_error', message: 'YK_SHOP_ID/YK_SECRET_KEY не заданы' })
+    }
     const auth = Buffer.from(`${shopId}:${secretKey}`).toString('base64')
     const idempotenceKey = `${Date.now()}-${Math.random().toString(36).slice(2)}`
     const returnUrl = (req.body && req.body.returnUrl) || (process.env.RETURN_URL || 'https://example.com')
@@ -129,15 +132,13 @@ app.post('/api/payments/yookassa', async (req, res) => {
       body: JSON.stringify(payload)
     })
     const data = await r.json()
-    if (!r.ok) {
-      return res.status(r.status).json({ error: 'yookassa_error', details: data })
-    }
+    if (!r.ok) return res.status(r.status).json({ error: 'yookassa_error', details: data })
 
     // Не очищаем корзину до подтверждения оплаты
     const confirmationUrl = data?.confirmation?.confirmation_url || null
     res.json({ id: data.id, status: data.status, confirmation_url: confirmationUrl })
   } catch (e) {
-    res.status(500).json({ error: 'server_error' })
+    res.status(500).json({ error: 'server_error', message: e?.message || String(e) })
   }
 })
 
