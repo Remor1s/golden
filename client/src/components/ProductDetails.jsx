@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
 function getSpecsFor(product) {
@@ -72,9 +72,43 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
     return list.filter(p => p.category === cur.category && p.id !== cur.id).slice(0, 12)
   }, [allProducts, cur])
 
+  // Swipe-to-close (left-to-right from screen edge)
+  const startXRef = useRef(0)
+  const startYRef = useRef(0)
+  const trackingRef = useRef(false)
+  const handleTouchStart = (e) => {
+    try {
+      const t = e.touches && e.touches[0]
+      if (!t) return
+      // Начинаем жест только от левого края экрана
+      if (t.clientX <= 30) {
+        startXRef.current = t.clientX
+        startYRef.current = t.clientY
+        trackingRef.current = true
+      } else {
+        trackingRef.current = false
+      }
+    } catch {}
+  }
+  const handleTouchMove = (e) => {
+    if (!trackingRef.current) return
+    try {
+      const t = e.touches && e.touches[0]
+      if (!t) return
+      const dx = t.clientX - startXRef.current
+      const dy = t.clientY - startYRef.current
+      // Условие свайпа вправо: достаточный dx и небольшой вертикальный сдвиг
+      if (dx > 70 && Math.abs(dy) < 50) {
+        trackingRef.current = false
+        onClose()
+      }
+    } catch {}
+  }
+  const handleTouchEnd = () => { trackingRef.current = false }
+
   const node = (
     <div className="fullscreen-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-      <div className="fullscreen-sheet" onClick={e => e.stopPropagation()}>
+      <div className="fullscreen-sheet" onClick={e => e.stopPropagation()} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
         <div style={{ display:'grid', gridTemplateColumns:'84px 1fr auto', gap:12, alignItems:'center', marginBottom:6 }}>
           <div style={{ width:84, height:84, borderRadius:10, overflow:'hidden', background:'#f6f6f6', display:'flex', alignItems:'center', justifyContent:'center' }}>
             {imageUrl ? <img src={imageUrl} alt={cur.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <div className="placeholder">4:5</div>}
@@ -89,7 +123,7 @@ export default function ProductDetails({ product, onClose, onAdd, isFavorite = f
           <div style={{ display:'flex', flexDirection:'column', gap:8, alignItems:'flex-end' }}>
             <div style={{ display:'flex', gap:8, alignItems:'center', width:'100%', justifyContent:'flex-end' }}>
               <div style={{ display:'flex', gap:8, alignItems:'center', marginRight:'auto' }}>
-              <button className="primary" style={{ padding:'8px 10px', borderRadius:10, background:'#111', color:'#fff' }} onClick={(e) => { e.stopPropagation(); onClose(); }}>Отмена</button>
+              <button className="primary" style={{ padding:'8px 10px', borderRadius:10, background:'#111', color:'#fff' }} onClick={(e) => { e.stopPropagation(); onClose(); }}>Назад</button>
                 {(onToggleFavorite || onToggleFavoriteProduct) && (
                   <button
                     className={"icon-like" + (isFavCur ? ' liked' : '')}

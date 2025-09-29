@@ -393,7 +393,7 @@ export default function App() {
             </div>
             {/* Убрали промокод и скидку из полноэкранной корзины */}
             <div className="confirm-actions" style={{ marginTop: 14 }}>
-              <button className="primary" onClick={() => setCartOpen(false)}>Отмена</button>
+              <button className="primary" onClick={() => setCartOpen(false)}>Назад</button>
               <button className="primary" disabled={!payable || placing} onClick={() => { setCartOpen(false); openConfirm() }}>Оформить</button>
             </div>
 
@@ -446,7 +446,7 @@ export default function App() {
             </div>
             {confirmError && <div className="promo-error">{confirmError}</div>}
             <div className="confirm-actions">
-              <button className="link" onClick={() => setConfirmOpen(false)}>Отмена</button>
+              <button className="link" onClick={() => setConfirmOpen(false)}>Назад</button>
               <button className="primary" disabled={placing} onClick={handleCheckout}>Оформить</button>
             </div>
           </div>
